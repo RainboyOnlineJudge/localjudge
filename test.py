@@ -4,7 +4,6 @@ import yaml
 import codecs
 import os
 
-
 yaml_path  = "1.yaml"
 
 if not os.path.exists(yaml_path):
@@ -23,4 +22,7 @@ print(config)
 
 # 设计思路
 
-handler 处理一个题目
+# handler 处理一个题目
+
+# 过程:
+# 检查,得到数据列表 -> 编译 -> 逐一评测

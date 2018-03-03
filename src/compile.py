@@ -8,7 +8,6 @@ from .post import post_data
 from .utils import read_partial_data_from_file,mq_emit
 
 
-@celery.task
 def compile(
         code,        # 代码
         data_dir,    # 数据的目录
@@ -41,8 +40,11 @@ def compile(
     if compile_code_res['status'] != 0: # 错误
         compile_code_res['message'] = '代码编译失败';
         compile_code_res['err_code'] = 1
-        mq_emit(judge_client_id,compile_code_res)
-        raise Exception('code compile error')
+        return {
+                "status": -1,
+                "message":'代码编译失败',
+                "details": compile_code_res["details"]
+                }
 
     # 统计 spj
     running_path = os.path.join(round_dir, 'spj')
@@ -55,14 +57,11 @@ def compile(
     elif extname == '':  #无后缀
         spj_path =os.path.join(TESTLIB_BUILD_DIR,_cmp)
     else :
-        mq_emit(judge_client_id,{
+        return {
             'status':-1,
-            'mid':COMPILING,
             'err_code':2,
             'message':'还不支持这种文件比较器:'+_cmp,
-            'revert':revert
-            })
-        raise Exception('do not support this cmp:'+_cmp +' yet!');
+            }
 
     # 复制 spj
     if os.path.exists(spj_path):
@@ -71,16 +70,13 @@ def compile(
         else:
             shutil.copyfile(spj_path,round_spj_src_path)
     else :
-        mq_emit(judge_client_id,{
+        return {
             'status':-1,
-            'mid':COMPILING,
             'err_code':3,
             'message':'文件比较器不存在:'+_cmp,
-            'revert':revert
-            })
-        raise Exception('cmp not exists');
+            }
 
-    # 判断是否要编译
+    # 判断是否要编译spj
     compile_spj_res = {'status':0,'mid':COMPILING,'revert':revert}
     if extname == '.cpp':
         compile_spj_res = __compile__(
@@ -93,23 +89,20 @@ def compile(
             revert = revert
             )
 
+    # spj 编译失败
     if compile_spj_res['status'] != 0:
         compile_spj_res['message'] = '编译spj失败'
         compile_spj_res['err_code'] = 4
-        mq_emit(judge_client_id,compile_spj_res)
-        raise Exception('spj compile error!');
+        return compile_spj_res
     #  编译结束
 
     os.chmod(running_path, 0o755)
 
     # 发送编译成功的信息
-    mq_emit(judge_client_id,{
-        'status':0,
-        'message':'编译代码成功',
-        'mid':COMPILING,
-        'revert':revert
-        })
-    return
+    return {
+            "status":0,
+            "message":"编译成功"
+    }
 
 # 编译的包装
 def __compile__(

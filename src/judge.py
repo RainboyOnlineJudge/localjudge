@@ -40,7 +40,6 @@ config_data:
     revert
 '''
 
-@celery.task
 def run_judge(not_use,config_data,infile,ansfile,count):
 
     in_path = os.path.join(config_data["data_dir"], infile)
@@ -94,14 +93,13 @@ def run_judge(not_use,config_data,infile,ansfile,count):
     verdict = result['result']
 
     judge_ans = dict(
-        status:0,
+        status=0,
         count=count,
         mid=JUDGING,
         time=result['cpu_time'],
         memory=result['memory'],
         result=verdict,
         details=ans_checker['details']      # 答案错误细节
-        revert=config_data['revert']
     )
 
     mq_emit(config_data["judge_client_id"],judge_ans)

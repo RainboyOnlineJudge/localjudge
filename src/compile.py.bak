@@ -11,7 +11,7 @@ from .utils import read_partial_data_from_file,emit_to_one
 编译code,
 编译/复制spj
 '''
-@celery.task
+
 def compile(
         code='',        # 代码
         data_dir='',    # 数据的目录
