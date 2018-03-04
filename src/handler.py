@@ -1,7 +1,6 @@
 # coding:utf-8
 from .settings import RoundSettings
 from .judge import run_judge
-from .post import post_data
 from .compile import compile
 from config import *
 from .utils import import_data,randomize_round_id
@@ -36,20 +35,6 @@ class Handler(object):
                "judge_client_id":1,
                "cmp":self.settings.cmp
         }
-        #for_judge_data = {
-        #        "time":self.settings.time,
-        #        "memory":self.settings.memory,
-        #        "output_size":self.settings.output_size,
-        #        "judger":self.settings.judger,
-        #        "run_cmd":self.settings.run_cmd,
-        #        "env":self.settings.language_settings["env"],
-        #        "rule":self.settings.language_settings["seccomp_rule"],
-        #        "data_dir":self.settings.data_dir,
-        #        "round_dir":self.settings.round_dir,
-        #        "cmp":self.settings.cmp,
-        #        "judge_client_id":self.settings.judge_client_id,
-        #        "revert":self.settings.revert
-        #}
 
         #groups = [run_judge.s(for_judge_data,key,val,idx)
         #                  for idx, (key, val) in enumerate(data, start=1)]
@@ -67,5 +52,33 @@ class Handler(object):
                self.settings.compile_log_path,
                self.settings.language_settings['env']
         )
-        #        ) | group(groups) |post_data(self.settings.judge_client_id,self.settings.revert)
-        #task_series()
+        
+        # 编译失败
+        if compile_result["status"] != 0 :
+            compile_result["mid"] = 2
+            return compile_result
+
+        # 评测
+
+        for_judge_data = {
+                "time":self.settings.time,
+                "memory":self.settings.memory,
+                "output_size":self.settings.output_size,
+                "judger":self.settings.judger,
+                "run_cmd":self.settings.run_cmd,
+                "env":self.settings.language_settings["env"],
+                "rule":self.settings.language_settings["seccomp_rule"],
+                "data_dir":self.settings.data_dir,
+                "round_dir":self.settings.round_dir,
+                "cmp":self.settings.cmp,
+                "judge_client_id":"judge_client_id",
+                "revert":"revert"
+        }
+
+        judge_result = []
+        for idx, (input_data, output_data) in enumerate(data["result"], start=1):
+            res = run_judge(for_judge_data,input_data,output_data,idx)
+            judge_result.append(res)
+
+        return judge_result
+

@@ -4,7 +4,6 @@ from config import *
 import shutil
 import _judger
 import os
-from .post import post_data
 from .utils import read_partial_data_from_file,mq_emit
 
 

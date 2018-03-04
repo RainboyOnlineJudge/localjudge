@@ -40,7 +40,7 @@ config_data:
     revert
 '''
 
-def run_judge(not_use,config_data,infile,ansfile,count):
+def run_judge(config_data,infile,ansfile,count):
 
     in_path = os.path.join(config_data["data_dir"], infile)
     out_path = os.path.join(config_data["round_dir"], random_string(32))
@@ -102,8 +102,7 @@ def run_judge(not_use,config_data,infile,ansfile,count):
         details=ans_checker['details']      # 答案错误细节
     )
 
-    mq_emit(config_data["judge_client_id"],judge_ans)
-    del judge_ans["revert"]
+    #del judge_ans["revert"]
     return judge_ans
 
 '''

@@ -1,6 +1,6 @@
 # 详细的流程:
 
-# handler class 初始化
+## 0.handler class 初始化
 
 data:
 
@@ -15,15 +15,22 @@ data:
 data_dir: 数据文件路径
 output_dir: 数据输出路径
 
-# handler 查检 data_dir 里的data是否存在
+## 1.handler 查检 data_dir 里的data是否存在
 
-## 编译 compile
+mid:1
+
+## 2.编译 compile
+
 
 成功
+mid:2
 
 代码失败
+mid:2
 
 spj.cpp 编译失败
+mid:2
+err_code:4
 
 ## 如果使用自定义的spj?
 

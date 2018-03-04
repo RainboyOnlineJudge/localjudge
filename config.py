@@ -35,6 +35,20 @@ COMPILE_ERROR = 6
 IDLENESS_LIMIT_EXCEEDED = 7
 SUM_TIME_LIMIT_EXCEEDED = 8
 
+# 结果对应的描述
+result_code = {
+        "-1":{ "long":"WRONG_ANSWER", "short":"W" },
+        "0":{  "long":"ACCEPTED",                "short":"A"},
+        "1":{  "long":"CPU_TIME_LIMIT_EXCEEDED", "short":"T"},
+        "2":{  "long":"REAL_TIME_LIMIT_EXCEEDED","short":"T"},
+        "3":{  "long":"MEMORY_LIMIT_EXCEEDED",   "short":"M"},
+        "4":{  "long":"RUNTIME_ERROR",           "short":"R"},
+        "5":{  "long":"SYSTEM_ERROR",            "short":"S"},
+        "6":{  "long":"COMPILE_ERROR",           "short":"C"},
+        "7":{  "long":"IDLENESS_LIMIT_EXCEEDED", "short":"I"},
+        "8":{  "long":"SUM_TIME_LIMIT_EXCEEDED", "short":"T"}
+}
+
 
 # socket respone message ID
 # MID 值
