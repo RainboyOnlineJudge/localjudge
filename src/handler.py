@@ -20,13 +20,11 @@ class Handler(object):
         
         if data['status']!= 0:
             data['mid'] = PREPARE_JUDGE
-            data['revert'] = self.settings.revert
-            # emit_to_one(self.settings.judge_client_id,data)
-            raise UserWarning("")
+            data["message"] = "数据列表错误"
+            return data
 
-        #
-        ## for debug 输出 round dir
-        #print(self.settings.round_dir)
+        # for debug 输出 round dir
+        # print(self.settings.round_dir)
 
         for_compile_data = {
                "code":self.settings.code,

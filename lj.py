@@ -1,4 +1,7 @@
 # coding:utf-8
+
+import yaml
+import os
 import argparse
 from src.handler import Handler
 from src.post import simple_print
@@ -10,7 +13,7 @@ parser.add_argument("--src", help="源代码的路径")
 parser.add_argument("--data", help="数据路径")
 parser.add_argument("--memory", type=int,help="内存限制")
 parser.add_argument("--time", type=int,help="时间限制")
-parser.add_argument("--config", type=int,help="比较模式时,YAML配置文件的路径")
+parser.add_argument("--config", type=str,help="比较模式时,YAML配置文件的路径")
 args = parser.parse_args()
 args_dict = args.__dict__
 
@@ -42,12 +45,67 @@ def singe(code_src,data_dir,output_dir="output",time_limit=1,memory_limit=512,sp
 
 
 # 处理比赛模式
-def contest():
-    pass
+def contest(config_path):
+    if not os.path.exists(config_path):
+        print("没有打到配置文件",config_path)
+        exit(1)
+    config_c=""
+    with open(config_path) as f:
+        config_c = f.read()
+    config = yaml.load(config_c)
+
+    print("====== 欢迎参加比赛: %s ======" % config["name"])
+
+    data_base_path = config["data_base_path"]
+    user_base_path = config["user_base_path"]
+    problems = config["problems"]
+    print(problems)
+
+    users = list(filter(lambda x:os.path.isdir(os.path.join(user_base_path,x)) ,os.listdir(user_base_path)))
+
+    if len(users) == 0:
+        print("选手目录为空:",user_base_path)
+    else:
+        print("参加的选手有:",",".join(users))
+
+    ### ????? to do
+    out_path = 'output'
+    # 对每个选手进行测试
+    for user in users:
+        _path_ = os.path.join(user_base_path,user)
+        print("\n\n评测代码,选手:",user)
+        for problem in problems:
+
+            code_path =  os.path.join(_path_,problem["name"]+".cpp")
+            if os.path.exists(code_path):
+                data = {}
+
+                data["code_src"] = code_path
+
+                # 数据目录 是否有参数
+                data["data_dir"] = os.path.join(data_base_path,problem["name"])
+
+                # 时间限制
+                if "time" in problem:
+                    data["time_limit"] = problem["time"]
+
+                # 内存限制
+                if "memory" in problem:
+                    data["time_limit"] = problem["memory"]
+
+                # spj
+                if "spj" in problem:
+                    data["spj"] = problem["spj"]
+
+                # 运行
+                res = singe(**data)
+                simple_print(res)
+            else:
+                print("代码文件不存在:",problem["name"]+".cpp")
+
+    
 
 
-print(args)
-print(args.__dict__)
 
 
 # 根据命令行 进行评测
@@ -83,4 +141,4 @@ if args_dict["config"] == None:
 
 # 进行比赛模式
 else:
-    contest()
+    contest(args_dict["config"])

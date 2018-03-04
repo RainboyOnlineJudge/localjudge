@@ -12,12 +12,17 @@ def simple_print(result_arr,oier_name="",idx=""):
     total_memory =0
     total_time = 0
     result_str=""
+
+    if "status" in result_arr and result_arr["status"] != 0 :
+        print(deal_wrong(result_arr))
+        return
+
     for i in result_arr:
         total_time += i["time"]
         total_memory += i["memory"]
         result_str += result_code[str(i["result"])]["short"]
 
-    total_memory = total_memory /1024
+    total_memory = round(total_memory /1024,2)
 
     format_string = ""
     format_ta = "    "
@@ -42,4 +47,16 @@ def simple_print(result_arr,oier_name="",idx=""):
     print(out)
     return out
 # 详细输出,多行
+
+
+
+
+
+def deal_wrong(result):
+    mid = result["mid"]
+
+    if mid == PREPARE_JUDGE:
+        return "错误阶段:准备评测,原因:"+result["message"]
+    elif mid == COMPILING:
+        return "错误阶段:{},原因:{}".format("编译",result["details"])
 
