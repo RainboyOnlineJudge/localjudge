@@ -14,6 +14,7 @@ parser.add_argument("--data", help="数据路径")
 parser.add_argument("--memory", type=int,help="内存限制")
 parser.add_argument("--time", type=int,help="时间限制")
 parser.add_argument("--config", type=str,help="比较模式时,YAML配置文件的路径")
+parser.add_argument("--score", type=int,default=100,help="比较模式时,YAML配置文件的路径")
 args = parser.parse_args()
 args_dict = args.__dict__
 
@@ -26,7 +27,7 @@ def print_judge_res():
     pass
 
 # 处理一个评测
-def singe(code_src,data_dir,output_dir="output",time_limit=1,memory_limit=512,spj="fcmp2",output_size=1024,lang="cpp"):
+def single(code_src,data_dir,output_dir="output",time_limit=1,memory_limit=512,spj="fcmp2",output_size=1024,lang="cpp"):
     code = ""
     with open(code_src) as f:
         code = f.read()
@@ -59,7 +60,7 @@ def contest(config_path):
     data_base_path = config["data_base_path"]
     user_base_path = config["user_base_path"]
     problems = config["problems"]
-    print(problems)
+    
 
     users = list(filter(lambda x:os.path.isdir(os.path.join(user_base_path,x)) ,os.listdir(user_base_path)))
 
@@ -91,15 +92,18 @@ def contest(config_path):
 
                 # 内存限制
                 if "memory" in problem:
-                    data["time_limit"] = problem["memory"]
+                    data["memory_limit"] = problem["memory"]
 
                 # spj
                 if "spj" in problem:
                     data["spj"] = problem["spj"]
 
                 # 运行
-                res = singe(**data)
-                simple_print(res)
+                res = single(**data)
+                _score = 100
+                if "score" in problem:
+                    _score = int(problem["score"])
+                simple_print(res,score=_score)
             else:
                 print("代码文件不存在:",problem["name"]+".cpp")
 
@@ -135,8 +139,8 @@ if args_dict["config"] == None:
         data["memory_limit"] = args_dict["memory"]
 
     # 运行
-    res = singe(**data)
-    simple_print(res)
+    res = single(**data)
+    simple_print(res,score=args_dict["score"])
 
 
 # 进行比赛模式

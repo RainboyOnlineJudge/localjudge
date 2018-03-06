@@ -7,11 +7,13 @@ problems:
  - name: aplusb1
    time: 1
    memory: 128
+   core: 100   #default
    spj: fcmp2   #default
  - name: aplusb2
    time: 1
    memory: 512
-   spj: spj.cpp
+   core: 200   #set by self
+   # spj: spj.cpp
  - name: aplusb3
    time: 2
    memory: 64

@@ -42,8 +42,11 @@ lj --src=main.cpp  --data=path_of_data --memroy=128 --time=1000 -output_path
 lj --config=
 ```
 
+### 其它参数
 
-比赛模式 评测多个人的比赛
+ - score,`--score=100`,分值,默认100
+
+## 比赛模式 评测多个人的比赛
 
 
 yaml
@@ -68,7 +71,11 @@ problems:
 
 测试的过程:
 
+## 如果 同时输出到屏幕和文件?
 
+```sh
+sudo lj.py --config=1.yaml | & tee out
+```
 
 ## 没有解决的问题:
 
